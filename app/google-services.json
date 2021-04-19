@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "867363449203",
+    "project_id": "movietinder-8c165",
+    "storage_bucket": "movietinder-8c165.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:867363449203:android:71fbf091f93bc4d6cafd06",
+        "android_client_info": {
+          "package_name": "com.example.movietinder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "867363449203-2tedjfu9eblg8kd98g4544678tm0vcg2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.movietinder",
+            "certificate_hash": "8c55b4e8deda3be875a53c6a090fd517d0cf6d29"
+          }
+        },
+        {
+          "client_id": "867363449203-48um3tn0hsabaubb108jrburqmvek2ph.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_OgDwAQgZzWLmRVRuL9MvEbmzwYxbGvM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "867363449203-48um3tn0hsabaubb108jrburqmvek2ph.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
