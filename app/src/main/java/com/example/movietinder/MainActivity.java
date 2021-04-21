@@ -14,6 +14,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.util.ArrayList;
@@ -30,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
 
     private final String IMdB_BASE_URL = "https://www.imdb.com/title/";
 
+    private DatabaseReference usersDB;
+
     private ListView listView;
     private List<Movie> cardItems;
 
@@ -39,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         firebaseAuth = FirebaseAuth.getInstance();
+
+        usersDB = FirebaseDatabase.getInstance().getReference().child("Users");
 
         cardItems = new ArrayList<>();
 
@@ -90,15 +97,20 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onLeftCardExit(Object dataObject) {
-                //Do something on the left!
-                //You also have access to the original object.
-                //If you want to use it just cast it (String) dataObject
-                makeToast(MainActivity.this, "Left!");
+                Movie currentMovie = (Movie)dataObject;
+                String uid = firebaseAuth.getUid();
+                usersDB.child(uid).child("Dislike").child(currentMovie.getImdb_code()).setValue(true);
+                usersDB.child(uid).child("Like").child(currentMovie.getImdb_code()).removeValue();
+                makeToast(MainActivity.this, "Rejected " + currentMovie.getTitle());
             }
 
             @Override
             public void onRightCardExit(Object dataObject) {
-                makeToast(MainActivity.this, "Right!");
+                Movie currentMovie = (Movie)dataObject;
+                String uid = firebaseAuth.getUid();
+                usersDB.child(uid).child("Like").child(currentMovie.getImdb_code()).setValue(true);
+                usersDB.child(uid).child("Dislike").child(currentMovie.getImdb_code()).removeValue();
+                makeToast(MainActivity.this, "Added " + currentMovie.getTitle() + " to Matches");
             }
 
             @Override
@@ -114,8 +126,6 @@ public class MainActivity extends AppCompatActivity {
         flingContainer.setOnItemClickListener(new SwipeFlingAdapterView.OnItemClickListener() {
             @Override
             public void onItemClicked(int itemPosition, Object dataObject) {
-                //TODO: correct movie is not being retrieved - currentMovie is always first movie
-
                 Movie currentMovie = movieAdapter.getItem(itemPosition);
                 String IMdBCode = currentMovie.getImdb_code();
                 String urlToOpen = IMdB_BASE_URL + IMdBCode;
@@ -126,6 +136,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
     static void makeToast(Context ctx, String s){
         Toast.makeText(ctx, s, Toast.LENGTH_SHORT).show();
