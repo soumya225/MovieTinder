@@ -1,5 +1,7 @@
 package com.example.movietinder;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -14,15 +16,21 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 //TODO: add info for users to indicate how to swipe (e.g. click to open website)
+//TODO: add loading bar
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,8 +43,10 @@ public class MainActivity extends AppCompatActivity {
 
     private DatabaseReference usersDB;
 
-    private ListView listView;
     private List<Movie> cardItems;
+
+
+    private String uid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +54,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         firebaseAuth = FirebaseAuth.getInstance();
+        uid = firebaseAuth.getUid();
 
         usersDB = FirebaseDatabase.getInstance().getReference().child("Users");
 
         cardItems = new ArrayList<>();
+
 
         signOutButton = findViewById(R.id.sign_out_button);
         signOutButton.setOnClickListener(new View.OnClickListener() {
@@ -64,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
 
         QueryService qs = new QueryService(this);
 
-        qs.getMoviesList(15, 3, "Romance", new QueryService.VolleyResponseListener() {
+        qs.getMoviesList(15, 5, "Action", new QueryService.VolleyResponseListener() {
             @Override
             public void onError(String message) {
                 makeToast(MainActivity.this, message);
@@ -78,10 +90,11 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 movieAdapter.notifyDataSetChanged();
+
             }
         });
 
-        movieAdapter = new MovieAdapter(MainActivity.this, R.layout.item, cardItems);
+        movieAdapter = new MovieAdapter(MainActivity.this, R.layout.card_item_view, cardItems);
 
         SwipeFlingAdapterView flingContainer = findViewById(R.id.frame);
 
@@ -98,18 +111,20 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onLeftCardExit(Object dataObject) {
                 Movie currentMovie = (Movie)dataObject;
-                String uid = firebaseAuth.getUid();
-                usersDB.child(uid).child("Dislike").child(currentMovie.getImdb_code()).setValue(true);
-                usersDB.child(uid).child("Like").child(currentMovie.getImdb_code()).removeValue();
+
+                usersDB.child(uid).child("Dislike").child(currentMovie.getTitle()).setValue(true);
+                usersDB.child(uid).child("Like").child(currentMovie.getTitle()).removeValue();
+
                 makeToast(MainActivity.this, "Rejected " + currentMovie.getTitle());
             }
 
             @Override
             public void onRightCardExit(Object dataObject) {
                 Movie currentMovie = (Movie)dataObject;
-                String uid = firebaseAuth.getUid();
-                usersDB.child(uid).child("Like").child(currentMovie.getImdb_code()).setValue(true);
-                usersDB.child(uid).child("Dislike").child(currentMovie.getImdb_code()).removeValue();
+
+                usersDB.child(uid).child("Like").child(currentMovie.getTitle()).setValue(true);
+                usersDB.child(uid).child("Dislike").child(currentMovie.getTitle()).removeValue();
+
                 makeToast(MainActivity.this, "Added " + currentMovie.getTitle() + " to Matches");
             }
 
@@ -135,6 +150,47 @@ public class MainActivity extends AppCompatActivity {
                 makeToast(MainActivity.this, "Opening IMdB web page for " + currentMovie.getTitle());
             }
         });
+
+        /*
+        DatabaseReference likesDB = FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("Like");
+
+        likesDB.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.equals(true) || snapshot==null) return;
+
+                Map<String, Object> map = (Map<String, Object>) snapshot.getValue();
+                for(String key: map.keySet()) {
+                    if(!ActivityForChoosingLoginOrRegistration.likes.contains(key))
+                        ActivityForChoosingLoginOrRegistration.likes.add(key);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        DatabaseReference dislikesDB = FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("Dislike");
+
+        dislikesDB.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.equals(true) || snapshot==null) return;
+
+                Map<String, Object> map = (Map<String, Object>) snapshot.getValue();
+                for(String key: map.keySet()) {
+                    if(!ActivityForChoosingLoginOrRegistration.dislikes.contains(key))
+                        ActivityForChoosingLoginOrRegistration.dislikes.add(key);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        }); */
     }
 
 
@@ -153,6 +209,4 @@ public class MainActivity extends AppCompatActivity {
         // Send the intent to launch a new activity
         startActivity(websiteIntent);
     }
-
-
 }

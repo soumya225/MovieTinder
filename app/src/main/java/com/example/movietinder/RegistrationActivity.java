@@ -28,6 +28,8 @@ public class RegistrationActivity extends AppCompatActivity {
     private EditText password;
     private EditText username;
 
+    DatabaseReference currentUserDB;
+
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener firebaseAuthStateListener;
 
@@ -42,7 +44,7 @@ public class RegistrationActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if(user != null) { //user is logged in if true
-                    Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
+                    Intent intent = new Intent(RegistrationActivity.this, UserHomePage.class);
                     startActivity(intent);
                     finish();
                     return;
@@ -80,10 +82,11 @@ public class RegistrationActivity extends AppCompatActivity {
                             Toast.makeText(RegistrationActivity.this, "Error registering", Toast.LENGTH_SHORT).show();
                         }
                         else {
-                            String userID = firebaseAuth.getCurrentUser().getUid();
-                            DatabaseReference currentUserDB =
-                                    FirebaseDatabase.getInstance().getReference().child("Users").child("UserID").child("Username");
-                            currentUserDB.setValue(username);
+                            String uid = firebaseAuth.getCurrentUser().getUid();
+                            currentUserDB = FirebaseDatabase.getInstance().getReference().child("Users").child(uid);
+                            currentUserDB.child("Like").setValue(true);
+                            currentUserDB.child("Dislike").setValue(true);
+                            currentUserDB.child("Logged in").setValue(true);
 
                         }
                     }
@@ -103,6 +106,8 @@ public class RegistrationActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         firebaseAuth.removeAuthStateListener(firebaseAuthStateListener);
+
+
     }
 
     @Override
