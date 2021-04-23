@@ -1,5 +1,7 @@
 package com.example.movietinder;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -14,24 +16,39 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 //TODO: add info for users to indicate how to swipe (e.g. click to open website)
+//TODO: add loading bar
+//TODO: add settings so that users can discover movies
+//TODO: prevent discovered movies from being discovered again unless all movies from api are done
+//TODO: some movies contain illegal characters (e.g. '.' in Jr.) - encode and decode to prevent crashing
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button signOutButton;
+
     private MovieAdapter movieAdapter;
 
     private FirebaseAuth firebaseAuth;
 
     private final String IMdB_BASE_URL = "https://www.imdb.com/title/";
 
-    private ListView listView;
+    private DatabaseReference usersDB;
+
     private List<Movie> cardItems;
+
+    private String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,25 +56,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         firebaseAuth = FirebaseAuth.getInstance();
+        email = Utils.encodeString(firebaseAuth.getCurrentUser().getEmail());
+
+        usersDB = FirebaseDatabase.getInstance().getReference().child("Users");
 
         cardItems = new ArrayList<>();
-
-        signOutButton = findViewById(R.id.sign_out_button);
-        signOutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                firebaseAuth.signOut();
-                Intent intent = new Intent(MainActivity.this, ActivityForChoosingLoginOrRegistration.class);
-                startActivity(intent);
-                finish();
-                return;
-            }
-        });
 
 
         QueryService qs = new QueryService(this);
 
-        qs.getMoviesList(15, 3, "Romance", new QueryService.VolleyResponseListener() {
+        qs.getMoviesList(50, 4, "Thriller", new QueryService.VolleyResponseListener() {
             @Override
             public void onError(String message) {
                 makeToast(MainActivity.this, message);
@@ -71,10 +79,11 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 movieAdapter.notifyDataSetChanged();
+
             }
         });
 
-        movieAdapter = new MovieAdapter(MainActivity.this, R.layout.item, cardItems);
+        movieAdapter = new MovieAdapter(MainActivity.this, R.layout.card_item_view, cardItems);
 
         SwipeFlingAdapterView flingContainer = findViewById(R.id.frame);
 
@@ -90,15 +99,26 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onLeftCardExit(Object dataObject) {
-                //Do something on the left!
-                //You also have access to the original object.
-                //If you want to use it just cast it (String) dataObject
-                makeToast(MainActivity.this, "Left!");
+                Movie currentMovie = (Movie)dataObject;
+
+                String safeCurrentMovieTitle = Utils.encodeString(currentMovie.getTitle());
+
+                usersDB.child(email).child("Dislike").child(safeCurrentMovieTitle).setValue(true);
+                usersDB.child(email).child("Like").child(safeCurrentMovieTitle).removeValue();
+
+                makeToast(MainActivity.this, "Added " + currentMovie.getTitle() + " to Dislikes");
             }
 
             @Override
             public void onRightCardExit(Object dataObject) {
-                makeToast(MainActivity.this, "Right!");
+                Movie currentMovie = (Movie)dataObject;
+
+                String safeCurrentMovieTitle = Utils.encodeString(currentMovie.getTitle());
+
+                usersDB.child(email).child("Like").child(safeCurrentMovieTitle).setValue(true);
+                usersDB.child(email).child("Dislike").child(safeCurrentMovieTitle).removeValue();
+
+                makeToast(MainActivity.this, "Added " + currentMovie.getTitle() + " to Likes");
             }
 
             @Override
@@ -114,8 +134,6 @@ public class MainActivity extends AppCompatActivity {
         flingContainer.setOnItemClickListener(new SwipeFlingAdapterView.OnItemClickListener() {
             @Override
             public void onItemClicked(int itemPosition, Object dataObject) {
-                //TODO: correct movie is not being retrieved - currentMovie is always first movie
-
                 Movie currentMovie = movieAdapter.getItem(itemPosition);
                 String IMdBCode = currentMovie.getImdb_code();
                 String urlToOpen = IMdB_BASE_URL + IMdBCode;
@@ -126,6 +144,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
     static void makeToast(Context ctx, String s){
         Toast.makeText(ctx, s, Toast.LENGTH_SHORT).show();
@@ -141,6 +161,4 @@ public class MainActivity extends AppCompatActivity {
         // Send the intent to launch a new activity
         startActivity(websiteIntent);
     }
-
-
 }

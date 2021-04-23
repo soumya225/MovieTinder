@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:context=".DislikesActivity">
+    <TextView
+        android:id="@+id/movie_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="bottom"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:textColor="@color/colorPrimaryVariant2"
+        android:textStyle="bold"
+        android:padding="15dp"
+        tools:text="title \n
+                    IMDb ID: imdbcode \n
+                    Rating: rating \n
+                    Runtime: runtime \n
+                    Genres: genre1, genre2, genre3" />
+</LinearLayout>

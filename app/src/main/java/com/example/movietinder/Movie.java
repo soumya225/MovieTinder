@@ -6,13 +6,23 @@ public class Movie {
     private int rating;
     private int runtime;
     private String genres;
+    private String posterURL;
 
-    public Movie(String imdb_code, String title, int rating, int runtime, String genres) {
+    public Movie(String imdb_code, String title, int rating, int runtime, String genres, String posterURL) {
         this.imdb_code = imdb_code;
         this.title = title;
         this.rating = rating;
         this.runtime = runtime;
         this.genres = genres;
+        this.posterURL = posterURL;
+    }
+
+    public String getPosterURL() {
+        return posterURL;
+    }
+
+    public void setPosterURL(String posterURL) {
+        this.posterURL = posterURL;
     }
 
     public String getImdb_code() {

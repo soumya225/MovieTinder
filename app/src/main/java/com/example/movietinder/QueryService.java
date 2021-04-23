@@ -1,6 +1,7 @@
 package com.example.movietinder;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 
 import com.android.volley.Request;
@@ -12,6 +13,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,6 +61,7 @@ public class QueryService {
                         String title = movie.optString("title", "");
                         int rating = movie.optInt("rating",0);
                         int runtime = movie.optInt("runtime", 0);
+                        String posterURL = movie.optString("large_cover_image", null);
                         JSONArray genres = movie.getJSONArray("genres");
                         String genre = "";
                         for(int j = 0; j < genres.length(); j++) {
@@ -65,7 +69,7 @@ public class QueryService {
                             if(j != genres.length() - 1) genre += ", ";
                         }
 
-                        Movie mv = new Movie(imdb_code, title, rating, runtime, genre);
+                        Movie mv = new Movie(imdb_code, title, rating, runtime, genre, posterURL);
 
                         moviesList.add(mv);
                     }

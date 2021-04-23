@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CompareActivity">
+
+    <EditText
+        android:id="@+id/friend_email_search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter a friend's email"
+        android:layout_margin="10dp"
+        />
+
+    <Button
+        android:id="@+id/search_bar_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Find movie matches"
+        android:layout_below="@id/friend_email_search_bar"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginBottom="10dp"
+        />
+
+    <ListView
+        android:id="@+id/matchesListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/search_bar_button"
+        />
+
+
+</RelativeLayout>

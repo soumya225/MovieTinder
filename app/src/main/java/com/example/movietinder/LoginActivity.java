@@ -2,9 +2,12 @@ package com.example.movietinder;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NavUtils;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,13 +31,14 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if(user != null) { //user is logged in if true
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    Intent intent = new Intent(LoginActivity.this, UserHomePage.class);
                     startActivity(intent);
                     finish();
                     return;
@@ -51,11 +55,20 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final String emailInput = loginEmail.getText().toString();
                 final String passwordInput = loginPassword.getText().toString();
+
+                if(TextUtils.isEmpty(emailInput)) {
+                    Toast.makeText(LoginActivity.this, "Please enter an email address", Toast.LENGTH_LONG).show();
+                    return;
+                }  else if(TextUtils.isEmpty(passwordInput)) {
+                    Toast.makeText(LoginActivity.this, "Please enter a password", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 firebaseAuth.signInWithEmailAndPassword(emailInput, passwordInput).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(!task.isSuccessful()) {
-                            Toast.makeText(LoginActivity.this, "Error logging in", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, "Error logging in. Please check username and/or password", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -74,5 +87,18 @@ public class LoginActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         firebaseAuth.removeAuthStateListener(firebaseAuthStateListener);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // User clicked on a menu option in the app bar overflow menu
+        switch (item.getItemId()) {
+            // Respond to a click on the "Up" arrow button in the app bar
+            case android.R.id.home:
+                // Navigate back to parent activity
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -11,8 +11,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MovieTinder">
-        <activity android:name=".LoginActivity"></activity>
-        <activity android:name=".RegistrationActivity" />
+        <activity android:name=".CompareActivity"
+            android:parentActivityName=".UserHomePage"/>
+        <activity
+            android:name=".DislikesActivity"
+            android:parentActivityName=".UserHomePage" />
+        <activity
+            android:name=".LikesActivity"
+            android:parentActivityName=".UserHomePage" />
+        <activity android:name=".UserHomePage" />
         <activity android:name=".ActivityForChoosingLoginOrRegistration">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,7 +27,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
+        <activity
+            android:name=".LoginActivity"
+            android:parentActivityName=".ActivityForChoosingLoginOrRegistration" />
+        <activity
+            android:name=".RegistrationActivity"
+            android:parentActivityName=".ActivityForChoosingLoginOrRegistration" />
+        <activity
+            android:name=".MainActivity"
+            android:parentActivityName=".UserHomePage" />
     </application>
 
 </manifest>
