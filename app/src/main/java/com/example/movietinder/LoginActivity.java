@@ -19,8 +19,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-//TODO fix back button on Login and Registration to go to home page
-
 public class LoginActivity extends AppCompatActivity {
     private Button loginButton;
     private EditText loginEmail;

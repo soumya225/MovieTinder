@@ -82,11 +82,10 @@ public class RegistrationActivity extends AppCompatActivity {
                             Toast.makeText(RegistrationActivity.this, "Error registering", Toast.LENGTH_SHORT).show();
                         }
                         else {
-                            String uid = firebaseAuth.getCurrentUser().getUid();
-                            currentUserDB = FirebaseDatabase.getInstance().getReference().child("Users").child(uid);
+                            String email = Utils.encodeString(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+                            currentUserDB = FirebaseDatabase.getInstance().getReference().child("Users").child(email);
                             currentUserDB.child("Like").setValue(true);
                             currentUserDB.child("Dislike").setValue(true);
-                            currentUserDB.child("Logged in").setValue(true);
 
                         }
                     }

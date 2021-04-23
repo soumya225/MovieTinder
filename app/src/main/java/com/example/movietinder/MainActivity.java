@@ -31,10 +31,13 @@ import java.util.Map;
 
 //TODO: add info for users to indicate how to swipe (e.g. click to open website)
 //TODO: add loading bar
+//TODO: add settings so that users can discover movies
+//TODO: prevent discovered movies from being discovered again unless all movies from api are done
+//TODO: some movies contain illegal characters (e.g. '.' in Jr.) - encode and decode to prevent crashing
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button signOutButton;
+
     private MovieAdapter movieAdapter;
 
     private FirebaseAuth firebaseAuth;
@@ -45,8 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
     private List<Movie> cardItems;
 
-
-    private String uid;
+    private String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,29 +56,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         firebaseAuth = FirebaseAuth.getInstance();
-        uid = firebaseAuth.getUid();
+        email = Utils.encodeString(firebaseAuth.getCurrentUser().getEmail());
 
         usersDB = FirebaseDatabase.getInstance().getReference().child("Users");
 
         cardItems = new ArrayList<>();
 
 
-        signOutButton = findViewById(R.id.sign_out_button);
-        signOutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                firebaseAuth.signOut();
-                Intent intent = new Intent(MainActivity.this, ActivityForChoosingLoginOrRegistration.class);
-                startActivity(intent);
-                finish();
-                return;
-            }
-        });
-
-
         QueryService qs = new QueryService(this);
 
-        qs.getMoviesList(15, 5, "Action", new QueryService.VolleyResponseListener() {
+        qs.getMoviesList(50, 4, "Thriller", new QueryService.VolleyResponseListener() {
             @Override
             public void onError(String message) {
                 makeToast(MainActivity.this, message);
@@ -112,20 +101,24 @@ public class MainActivity extends AppCompatActivity {
             public void onLeftCardExit(Object dataObject) {
                 Movie currentMovie = (Movie)dataObject;
 
-                usersDB.child(uid).child("Dislike").child(currentMovie.getTitle()).setValue(true);
-                usersDB.child(uid).child("Like").child(currentMovie.getTitle()).removeValue();
+                String safeCurrentMovieTitle = Utils.encodeString(currentMovie.getTitle());
 
-                makeToast(MainActivity.this, "Rejected " + currentMovie.getTitle());
+                usersDB.child(email).child("Dislike").child(safeCurrentMovieTitle).setValue(true);
+                usersDB.child(email).child("Like").child(safeCurrentMovieTitle).removeValue();
+
+                makeToast(MainActivity.this, "Added " + currentMovie.getTitle() + " to Dislikes");
             }
 
             @Override
             public void onRightCardExit(Object dataObject) {
                 Movie currentMovie = (Movie)dataObject;
 
-                usersDB.child(uid).child("Like").child(currentMovie.getTitle()).setValue(true);
-                usersDB.child(uid).child("Dislike").child(currentMovie.getTitle()).removeValue();
+                String safeCurrentMovieTitle = Utils.encodeString(currentMovie.getTitle());
 
-                makeToast(MainActivity.this, "Added " + currentMovie.getTitle() + " to Matches");
+                usersDB.child(email).child("Like").child(safeCurrentMovieTitle).setValue(true);
+                usersDB.child(email).child("Dislike").child(safeCurrentMovieTitle).removeValue();
+
+                makeToast(MainActivity.this, "Added " + currentMovie.getTitle() + " to Likes");
             }
 
             @Override
@@ -150,47 +143,6 @@ public class MainActivity extends AppCompatActivity {
                 makeToast(MainActivity.this, "Opening IMdB web page for " + currentMovie.getTitle());
             }
         });
-
-        /*
-        DatabaseReference likesDB = FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("Like");
-
-        likesDB.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.equals(true) || snapshot==null) return;
-
-                Map<String, Object> map = (Map<String, Object>) snapshot.getValue();
-                for(String key: map.keySet()) {
-                    if(!ActivityForChoosingLoginOrRegistration.likes.contains(key))
-                        ActivityForChoosingLoginOrRegistration.likes.add(key);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-        DatabaseReference dislikesDB = FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("Dislike");
-
-        dislikesDB.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.equals(true) || snapshot==null) return;
-
-                Map<String, Object> map = (Map<String, Object>) snapshot.getValue();
-                for(String key: map.keySet()) {
-                    if(!ActivityForChoosingLoginOrRegistration.dislikes.contains(key))
-                        ActivityForChoosingLoginOrRegistration.dislikes.add(key);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        }); */
     }
 
 

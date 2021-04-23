@@ -16,7 +16,6 @@ public class ActivityForChoosingLoginOrRegistration extends AppCompatActivity {
     private Button registerButton;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

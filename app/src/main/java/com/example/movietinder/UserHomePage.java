@@ -25,40 +25,65 @@ public class UserHomePage extends AppCompatActivity {
 
     DatabaseReference userDB;
 
+    private Button signOutButton;
+
     static List<String> likes;
     static List<String> dislikes;
+
+    String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_home_page);
 
+        signOutButton = findViewById(R.id.sign_out_button);
+        signOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(UserHomePage.this, ActivityForChoosingLoginOrRegistration.class);
+                startActivity(intent);
+                finish();
+                return;
+            }
+        });
+
         likes = new ArrayList<>();
         dislikes = new ArrayList<>();
 
-        userDB = FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getUid());
+        String email = Utils.encodeString(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+
+        userDB = FirebaseDatabase.getInstance().getReference().child("Users").child(email);
         userDB.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
                 DataSnapshot likesSnapshot = snapshot.child("Like");
-                Map<String, Object> map = (Map<String, Object>) likesSnapshot.getValue();
-
-                likes.clear();
-
-                for(String key: map.keySet()) {
-                    if(!likes.contains(key))
-                        likes.add(key);
-                }
-
                 DataSnapshot dislikesSnapshot = snapshot.child("Dislike");
-                Map<String, Object> map2 = (Map<String, Object>) dislikesSnapshot.getValue();
 
-                dislikes.clear();
+                if(likesSnapshot.hasChildren()) {
+                    Map<String, Object> map = (Map<String, Object>) likesSnapshot.getValue();
 
-                for(String key: map2.keySet()) {
-                    if(!dislikes.contains(key))
-                        dislikes.add(key);
+                    likes.clear();
+
+                    for(String key: map.keySet()) {
+                        if(!likes.contains(key))
+                            likes.add(key);
+                    }
                 }
+
+                if(dislikesSnapshot.hasChildren()) {
+                    Map<String, Object> map2 = (Map<String, Object>) dislikesSnapshot.getValue();
+
+                    dislikes.clear();
+
+                    for (String key : map2.keySet()) {
+                        if (!dislikes.contains(key))
+                            dislikes.add(key);
+                    }
+                }
+
             }
 
             @Override
@@ -100,7 +125,8 @@ public class UserHomePage extends AppCompatActivity {
         compareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent goToCompareActivity = new Intent(UserHomePage.this, CompareActivity.class);
+                startActivity(goToCompareActivity);
             }
         });
     }
