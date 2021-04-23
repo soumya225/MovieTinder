@@ -4,13 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="10dp"
+    android:background="@drawable/background"
     tools:context=".ActivityForChoosingLoginOrRegistration">
 
     <Button
         android:id="@+id/login_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="61dp"
+        android:layout_marginLeft="28dp"
+        android:layout_marginRight="28dp"
+        android:background="@drawable/bg_rounded"
+        android:textColor="@color/colorPrimary"
         android:text="Login"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
@@ -18,8 +22,13 @@
 
     <Button
         android:id="@+id/register_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="61dp"
+        android:layout_marginLeft="28dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginRight="28dp"
+        android:background="@drawable/bg_rounded"
+        android:textColor="@color/colorPrimary"
         android:text="Register"
         android:layout_below="@id/login_button"
         android:layout_centerHorizontal="true"

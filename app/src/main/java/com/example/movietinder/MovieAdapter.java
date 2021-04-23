@@ -32,7 +32,7 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
         ImageView poster = convertView.findViewById(R.id.movie_poster);
 
         title.setText(currentMovie.toString());
-        poster.setImageResource(R.drawable.ic_launcher_foreground);
+        poster.setImageResource(R.mipmap.ic_launcher_foreground);
 
         String url = currentMovie.getPosterURL();
         if (url != null) {
