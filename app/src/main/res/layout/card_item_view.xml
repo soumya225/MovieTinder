@@ -23,24 +23,23 @@
         <LinearLayout
             android:layout_gravity="center"
             android:layout_width="300dp"
-            android:layout_height="500dp"
+            android:layout_height="550dp"
             android:orientation="vertical"
+            android:background="#1BFFFFFF"
             android:gravity="center">
 
             <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="300dp"
+            android:layout_height="290dp"
             android:id="@+id/movie_poster"
-            android:layout_marginVertical="20dp"
+            android:layout_marginVertical="10dp"
             android:layout_gravity="center"
-            android:padding="2dp"
-            tools:src="@drawable/ic_launcher_foreground" />
+            tools:src="@mipmap/ic_launcher_foreground" />
 
             <TextView
                 android:id="@+id/movie_info"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
+                android:layout_height="match_parent"
                 android:padding="10dp"
                 android:textAlignment="textStart"
                 android:textColor = "@color/colorPrimaryVariant2"
