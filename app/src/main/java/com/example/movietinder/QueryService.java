@@ -58,7 +58,7 @@ public class QueryService {
                         JSONObject movie = (JSONObject)movies.get(i);
 
                         String imdb_code = movie.optString("imdb_code", "");
-                        String title = movie.optString("title", "");
+                        String title = movie.optString("title_long", "");
                         int rating = movie.optInt("rating",0);
                         int runtime = movie.optInt("runtime", 0);
                         String posterURL = movie.optString("large_cover_image", null);
