@@ -3,15 +3,18 @@ package com.example.movietinder;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -23,17 +26,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 //TODO: add info for users to indicate how to swipe (e.g. click to open website)
 //TODO: add loading bar
 //TODO: add settings so that users can discover movies
 //TODO: prevent discovered movies from being discovered again unless all movies from api are done
-//TODO: some movies contain illegal characters (e.g. '.' in Jr.) - encode and decode to prevent crashing
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,6 +51,9 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference usersDB;
 
     private List<Movie> cardItems;
+
+    private int limit = 10;
+    private int page = 1;
 
     private String email;
 
@@ -62,10 +69,13 @@ public class MainActivity extends AppCompatActivity {
 
         cardItems = new ArrayList<>();
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String minRating = sharedPreferences.getString(getString(R.string.minimum_rating), getString(R.string.minimum_rating_default));
+        String genre = sharedPreferences.getString(getString(R.string.genre), getString(R.string.genre_default));
 
         QueryService qs = new QueryService(this);
 
-        qs.getMoviesList(50, 4, "Thriller", new QueryService.VolleyResponseListener() {
+        qs.getMoviesList(limit, Integer.parseInt(minRating), genre, page, new QueryService.VolleyResponseListener() {
             @Override
             public void onError(String message) {
                 makeToast(MainActivity.this, message);
@@ -123,6 +133,23 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onAdapterAboutToEmpty(int itemsInAdapter) {
+                qs.getMoviesList(limit, Integer.parseInt(minRating), genre, ++page, new QueryService.VolleyResponseListener() {
+                    @Override
+                    public void onError(String message) {
+                        makeToast(MainActivity.this, message);
+                    }
+
+                    @Override
+                    public void onResponse(List<Movie> movieList) {
+
+                        for(int i = 0; i < movieList.size(); i++) {
+                            cardItems.add(movieList.get(i));
+                        }
+
+                        movieAdapter.notifyDataSetChanged();
+
+                    }
+                });
             }
 
             @Override

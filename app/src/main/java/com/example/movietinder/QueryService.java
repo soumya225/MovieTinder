@@ -42,8 +42,8 @@ public class QueryService {
         void onResponse(List<Movie> movieList);
     }
 
-    public void getMoviesList(int limit, int min_rating, String genre, VolleyResponseListener responseListener) {
-        String url = buildURL(limit, min_rating, genre);
+    public void getMoviesList(int limit, int min_rating, String genre, int page, VolleyResponseListener responseListener) {
+        String url = buildURL(limit, min_rating, genre, page);
 
         List<Movie> moviesList = new ArrayList<>();
 
@@ -91,13 +91,14 @@ public class QueryService {
 
     }
 
-    public String buildURL(int limit, int min_rating, String genre) {
+    public String buildURL(int limit, int min_rating, String genre, int page) {
         Uri baseUrl = Uri.parse(QUERY_BASE);
         Uri.Builder uriBuilder = baseUrl.buildUpon();
 
         uriBuilder.appendQueryParameter("limit", limit + "");
-        uriBuilder.appendQueryParameter("min_rating", min_rating + "");
+        uriBuilder.appendQueryParameter("minimum_rating", min_rating + "");
         uriBuilder.appendQueryParameter("genre", genre);
+        uriBuilder.appendQueryParameter("page", page + "");
 
         return uriBuilder.toString();
     }
