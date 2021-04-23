@@ -26,8 +26,9 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="wrap_content"
+                android:layout_width="320dp"
                 android:layout_height="300dp"
+                android:layout_gravity="center"
                 android:id="@+id/movie_poster"
                 tools:src="@drawable/ic_launcher_foreground"
                 android:padding="2dp"/>

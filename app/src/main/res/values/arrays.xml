@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="ratings" >
+        <item name = "0" >0</item>
+        <item name = "1" >1</item>
+        <item name = "2" >2</item>
+        <item name = "3" >3</item>
+        <item name = "4" >4</item>
+        <item name = "5" >5</item>
+        <item name = "6" >6</item>
+        <item name = "7" >7</item>
+        <item name = "8" >8</item>
+        <item name = "9" >9</item>
+    </string-array>
+
+    <string-array name="genres" >
+        <item name = "All" >All</item>
+        <item name = "Action" >Action</item>
+        <item name = "Adventure" >Adventure</item>
+        <item name = "Animation" >Animation</item>
+        <item name = "Biography" >Biography</item>
+        <item name = "Comedy" >Comedy</item>
+        <item name = "Crime" >Crime</item>
+        <item name = "Documentary" >Documentary</item>
+        <item name = "Drama" >Drama</item>
+        <item name = "Family" >Family</item>
+        <item name = "Fantasy" >Fantasy</item>
+        <item name = "History" >History</item>
+        <item name = "Horror" >Horror</item>
+        <item name = "Music" >Music</item>
+        <item name = "Musical" >Musical</item>
+        <item name = "Mystery" >Mystery</item>
+        <item name = "Romance" >Romance</item>
+        <item name = "Sci-Fi" >Sci-Fi</item>
+        <item name = "Sport" >Sport</item>
+        <item name = "Superhero" >Superhero</item>
+        <item name = "Thriller" >Thriller</item>
+        <item name = "War" >War</item>
+        <item name = "Western" >Western</item>
+    </string-array>
+</resources>

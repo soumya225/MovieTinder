@@ -1,6 +1,7 @@
 package com.example.movietinder;
 
 public class Utils {
+
     public static String encodeString(String string) {
         string = string.replace(".", ",");
         string = string.replace('$', '`');

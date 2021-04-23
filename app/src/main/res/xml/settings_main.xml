@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+
+    <androidx.preference.ListPreference
+        android:key="@string/minimum_rating"
+        android:title="Minimum Rating"
+        android:defaultValue="@string/minimum_rating_default"
+        android:entries="@array/ratings"
+        android:entryValues="@array/ratings"
+        />
+
+    <androidx.preference.ListPreference
+        android:key="@string/genre"
+        android:title="Genre"
+        android:defaultValue="@string/genre_default"
+        android:entries="@array/genres"
+        android:entryValues="@array/genres"
+        />
+
+</androidx.preference.PreferenceScreen>

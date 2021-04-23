@@ -8,6 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 public class MovieAdapter extends ArrayAdapter<Movie> {
@@ -31,6 +33,11 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
 
         title.setText(currentMovie.toString());
         poster.setImageResource(R.drawable.ic_launcher_foreground);
+
+        String url = currentMovie.getPosterURL();
+        if (url != null) {
+            Picasso.get().load(url).into(poster);
+        }
 
         return convertView;
     }
