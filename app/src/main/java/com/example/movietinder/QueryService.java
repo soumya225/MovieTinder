@@ -27,7 +27,6 @@ public class QueryService {
     private int min_rating; //between 0-9 inclusive
     private String genre; */
 
-    //TODO: use medium_cover_image in JSON results to add image cover
 
     public static final String QUERY_BASE = "https://yts.mx/api/v2/list_movies.json";
     Context context;

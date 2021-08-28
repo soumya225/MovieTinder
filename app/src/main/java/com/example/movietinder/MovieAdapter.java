@@ -13,7 +13,6 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 public class MovieAdapter extends ArrayAdapter<Movie> {
-    Context context;
 
     public MovieAdapter(Context context, int resourceID, List<Movie> items) {
         super(context, resourceID, items);
@@ -41,6 +40,5 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
 
         return convertView;
     }
-
 
 }
